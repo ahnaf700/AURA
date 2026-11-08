@@ -3,6 +3,7 @@ import { currentUser } from '@/lib/supabase/server';
 import { getOrCreateUserRow } from '@/lib/users';
 import Onboarding from './Onboarding';
 import Dashboard from './Dashboard';
+import { LogoMark } from '@/components/Logo';
 
 export default async function DashboardPage({ searchParams }) {
   const user = await currentUser();
@@ -16,7 +17,7 @@ export default async function DashboardPage({ searchParams }) {
   return (
     <div className="shell">
       <header className="topbar">
-        <span className="brand">AURA</span>
+        <a className="brand" href="/dashboard"><LogoMark size={40} /><span>AURA</span></a>
         <div className="who">
           <span className="muted">{user.email}</span>
           {complete && (

@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
 
-const COLORS = ['#0b5d6b', '#f2b632', '#c8472b', '#6a7fdb', '#14805e', '#9b5de5', '#e07a5f', '#8d99aa', '#2a9d8f', '#b5838d', '#577590'];
+const COLORS = ['#66e3cf', '#5cb8f4', '#7c8ff4', '#f4ae4f', '#ff9a76', '#c58bf2', '#8fd36b', '#f28bb5', '#b8c4d8', '#4fb3a5', '#e8d26b'];
 const idr = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 });
 
 function thisMonth() {
