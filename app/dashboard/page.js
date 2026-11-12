@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { currentUser } from '@/lib/supabase/server';
 import { getOrCreateUserRow } from '@/lib/users';
+import { isAdminEmail } from '@/lib/admin';
 import Onboarding from './Onboarding';
 import Dashboard from './Dashboard';
 import { LogoMark } from '@/components/Logo';
@@ -20,6 +21,7 @@ export default async function DashboardPage({ searchParams }) {
         <a className="brand" href="/dashboard"><LogoMark size={40} /><span>AURA</span></a>
         <div className="who">
           <span className="muted">{user.email}</span>
+          {user.email_confirmed_at && isAdminEmail(user.email) && <a className="btn ghost small" href="/admin">Admin</a>}
           {complete && (
             <a className="btn ghost small" href={showSetup ? '/dashboard' : '/dashboard?setup=1'}>
               {showSetup ? 'Kembali ke dashboard' : 'Pengaturan'}

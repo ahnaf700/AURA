@@ -16,7 +16,7 @@ export async function middleware(request) {
   });
 
   const { data } = await supabase.auth.getUser();
-  if (!data?.user && request.nextUrl.pathname.startsWith('/dashboard')) {
+  if (!data?.user && (request.nextUrl.pathname.startsWith('/dashboard') || request.nextUrl.pathname.startsWith('/admin'))) {
     const url = request.nextUrl.clone();
     url.pathname = '/';
     url.search = '';
@@ -26,5 +26,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/', '/dashboard/:path*', '/api/me', '/api/sheet', '/api/link-code', '/api/data'],
+  matcher: ['/', '/dashboard/:path*', '/admin/:path*', '/api/admin/:path*', '/api/me', '/api/sheet', '/api/link-code', '/api/data'],
 };

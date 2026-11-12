@@ -32,7 +32,7 @@ module.exports = {
         ],
       },
       {
-        source: '/(dashboard|api)(.*)',
+        source: '/(dashboard|admin|api)(.*)',
         headers: [{ key: 'Cache-Control', value: 'no-store' }],
       },
     ];

@@ -11,9 +11,8 @@ const aura = localFont({ src: './fonts/AuraWordmark.woff', weight: '400', style:
 // Tagline logo memakai sans geometris tipis; Montserrat Light paling mendekati.
 const tagline = Montserrat({ subsets: ['latin'], weight: ['300'], variable: '--font-tagline', display: 'swap' });
 
-const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
-  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-  : 'http://localhost:3000';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+  || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'http://localhost:3000');
 
 export const metadata = {
   metadataBase: new URL(siteUrl),

@@ -14,10 +14,14 @@ Browser ─► Supabase Auth (magic link) ─► /dashboard ─► /api/data ─
 
 ## Setup
 
-1. **Supabase**: buat project, jalankan `supabase/schema.sql` di SQL Editor.
-   (Sudah pernah menjalankan schema lama? Jalankan hanya `supabase/002_api_hits.sql`.)
-   Authentication > URL Configuration: isi *Site URL* dan tambahkan `https://DOMAINMU/auth/callback`
-   (dan `http://localhost:3000/auth/callback` untuk dev) ke *Redirect URLs*.
+1. **Supabase**: buat project, jalankan `supabase/schema.sql` di SQL Editor (project lama dengan tabel `users` versi lama:
+   jalankan `supabase/003_fix_schema_and_admin.sql`; tabel lama diganti nama jadi `users_legacy`, tidak dihapus).
+   **Login (wajib, ini penyebab link email menuju localhost):**
+   - Authentication > URL Configuration: *Site URL* = alamat situs asli (mis. `https://aura.vercel.app`). Tambahkan ke
+     *Redirect URLs*: `https://DOMAINMU/**` dan `http://localhost:3000/**`.
+   - Authentication > Emails > Templates > *Magic link*: tempel isi `supabase/email-magic-link.html`
+     (link berbasis `token_hash` + kode angka cadangan, jadi bisa dibuka di perangkat lain).
+   - Isi `NEXT_PUBLIC_SITE_URL` (URL situs) dan `ADMIN_EMAILS` (email admin) di env.
 2. **Google Apps Script** (akun Google bot): tempel `gas/Code.gs`, ikuti petunjuk di komentar atas file
    (Script Property `SHARED_SECRET`, timezone `Asia/Jakarta`, deploy sebagai Web App).
 3. **Template Sheet**: buat Google Sheet dengan sheet `Transaksi` dan header
@@ -29,6 +33,11 @@ Browser ─► Supabase Auth (magic link) ─► /dashboard ─► /api/data ─
    `SUPABASE_URL`→`NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_KEY`→`SUPABASE_SERVICE_KEY` + tambah anon key.)
 6. `npm install` lalu `npm run dev` (lokal) atau deploy ke Vercel dan isi env di dashboard Vercel.
    Untuk uji webhook lokal pakai tunnel (ngrok / cloudflared).
+
+## Admin
+Login dengan email yang ada di `ADMIN_EMAILS`, lalu buka `/admin`: ringkasan pengguna & pesan 24 jam, daftar pengguna
+(cari/filter, putuskan WhatsApp, lepas Sheet, hapus akun), kesehatan konfigurasi, dan log aksi admin.
+Isi transaksi tidak pernah ditampilkan (data ada di Sheet pengguna). Akun admin tidak bisa diubah dari panel.
 
 ## Alur pengguna baru
 Login (magic link) → salin template → share ke email bot sebagai Editor → tempel link Sheet

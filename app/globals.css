@@ -195,3 +195,13 @@ td.num-r, th.num-r { text-align: right; font-variant-numeric: tabular-nums; }
   .balance { padding: 24px 20px; }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* ---------- Admin ---------- */
+.admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+.admin-stats .stat .val { font-size: 1.7rem; }
+.admin-stats .sub { font-size: 0.82rem; }
+.tag.warn { background: rgba(244, 174, 79, 0.15); color: var(--amber); }
+.tag.muted { background: rgba(168, 182, 203, 0.15); color: var(--muted); }
+.tag.admin-tag { background: rgba(124, 143, 244, 0.18); color: var(--peri); font-family: var(--font-text); font-size: 0.75rem; letter-spacing: 0; }
+.brand .admin-tag { align-self: center; }
+.btn.danger { color: var(--expense); border-color: rgba(255, 154, 118, 0.45); }
