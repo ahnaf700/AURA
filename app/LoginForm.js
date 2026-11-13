@@ -29,11 +29,11 @@ export default function LoginForm({ failed }) {
   async function onVerify(e) {
     e.preventDefault();
     setState('verifying');
-    const { error } = await supabaseBrowser().auth.verifyOtp({
-      email: email.trim(),
-      token: code.replace(/\s/g, ''),
-      type: 'email',
-    });
+    const sb = supabaseBrowser();
+    const args = { email: email.trim(), token: code.replace(/\s/g, '') };
+    // Pengguna baru memakai email "Confirm sign up" (type signup); pengguna lama type email.
+    let { error } = await sb.auth.verifyOtp({ ...args, type: 'email' });
+    if (error) ({ error } = await sb.auth.verifyOtp({ ...args, type: 'signup' }));
     if (error) {
       setMsg('Kode salah atau sudah kedaluwarsa. Periksa lagi atau minta kode baru.');
       setState('sent-error');
