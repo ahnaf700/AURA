@@ -5,16 +5,22 @@ const nf = new Intl.NumberFormat('id-ID');
 const dt = new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
 const fmt = (s) => (s ? dt.format(new Date(s)) : '—');
 
-const ACTION_LABEL = { unlink_wa: 'Putuskan WhatsApp', reset_sheet: 'Lepas Sheet', delete: 'Hapus akun' };
+const ACTION_LABEL = {
+  unlink_chat: 'Putuskan chat',
+  unlink_wa: 'Putuskan WhatsApp', // log lama
+  telegram_webhook: 'Pasang webhook Telegram',
+  reset_sheet: 'Lepas Sheet',
+  delete: 'Hapus akun',
+};
 const CONFIRM = {
-  unlink_wa: 'Putuskan nomor WhatsApp dari akun ini? Pengguna harus menautkan ulang dengan kode baru.',
+  unlink_chat: 'Putuskan semua chat (WhatsApp dan Telegram) dari akun ini? Pengguna harus menautkan ulang dengan kode baru.',
   reset_sheet: 'Lepas Google Sheets dari akun ini? Isi Sheet milik pengguna tidak diubah.',
   delete: 'HAPUS akun ini permanen? Pengguna harus mendaftar ulang. Tindakan ini tidak bisa dibatalkan.',
 };
 
 function status(u) {
   if (u.hasSheet && u.linked) return ['Aktif', 'in'];
-  if (u.hasSheet) return ['Belum tautkan WA', 'warn'];
+  if (u.hasSheet) return ['Belum tautkan chat', 'warn'];
   return ['Belum setup', 'muted'];
 }
 
@@ -25,6 +31,34 @@ export default function AdminPanel() {
   const [q, setQ] = useState('');
   const [filter, setFilter] = useState('');
   const [busy, setBusy] = useState('');
+  const [tg, setTg] = useState(null);
+  const [tgMsg, setTgMsg] = useState('');
+
+  const loadTg = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/telegram', { cache: 'no-store' });
+      if (res.ok) setTg(await res.json());
+    } catch {
+      /* status Telegram bersifat tambahan */
+    }
+  }, []);
+
+  async function setupTg() {
+    setBusy('tg');
+    setTgMsg('');
+    try {
+      const res = await fetch('/api/admin/telegram', { method: 'POST' });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.error || 'Gagal memasang webhook.');
+      setTgMsg('Webhook terpasang.');
+      await loadTg();
+      await load();
+    } catch (e) {
+      setTgMsg(e.message);
+    } finally {
+      setBusy('');
+    }
+  }
 
   const load = useCallback(async () => {
     try {
@@ -39,7 +73,7 @@ export default function AdminPanel() {
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { load(); loadTg(); }, [load, loadTg]);
 
   async function act(u, action) {
     if (!window.confirm(`${u.email}\n\n${CONFIRM[action]}`)) return;
@@ -77,7 +111,7 @@ export default function AdminPanel() {
   const cards = [
     ['Total pengguna', s.total, `+${s.new7d} dalam 7 hari`],
     ['Aktif penuh', s.complete, 'Sheet + WhatsApp tertaut'],
-    ['Belum selesai setup', s.sheetOnly + s.noSheet, `${s.sheetOnly} tinggal tautkan WA`],
+    ['Belum selesai setup', s.sheetOnly + s.noSheet, `${s.sheetOnly} tinggal tautkan chat`],
     ['Pesan 24 jam', s.messages24h, `${s.activeNumbers24h} nomor aktif`],
     ['Panggilan dashboard 24 jam', s.apiHits24h, 'data, sheet, kode'],
   ];
@@ -95,6 +129,38 @@ export default function AdminPanel() {
             <div className="muted sub">{sub}</div>
           </div>
         ))}
+      </section>
+
+      <section className="panel" style={{ marginTop: 14 }}>
+        <h2>Saluran chat</h2>
+        <ul className="legend">
+          <li>
+            <span>Telegram{tg?.username ? ' (@' + tg.username + ')' : ''}</span>
+            <span className={`tag ${tg?.valid && tg?.webhookUrl ? 'in' : 'warn'}`} style={{ marginLeft: 'auto' }}>
+              {!tg ? 'Memuat…' : !tg.configured ? 'Belum diatur' : !tg.valid ? 'Token ditolak' : tg.webhookUrl ? 'Aktif' : 'Webhook belum dipasang'}
+            </span>
+          </li>
+          <li>
+            <span>WhatsApp</span>
+            <span className="tag muted" style={{ marginLeft: 'auto' }}>Dinonaktifkan sementara</span>
+          </li>
+        </ul>
+        {tg?.valid && (
+          <>
+            {tg.webhookUrl && <p className="muted" style={{ marginTop: 10 }}>Webhook: {tg.webhookUrl} · menunggu: {tg.pending}</p>}
+            {tg.lastError && <p className="err" style={{ marginTop: 6 }}>Error terakhir dari Telegram: {tg.lastError}</p>}
+            {!tg.secretSet && <p className="err" style={{ marginTop: 6 }}>TELEGRAM_WEBHOOK_SECRET belum valid (min 24 karakter).</p>}
+            <div className="row" style={{ marginTop: 10 }}>
+              <button className="btn small" disabled={!!busy || !tg.secretSet} onClick={setupTg}>
+                {busy === 'tg' ? 'Memasang…' : tg.webhookUrl ? 'Pasang ulang webhook' : 'Pasang webhook Telegram'}
+              </button>
+              <button className="btn ghost small" disabled={!!busy} onClick={loadTg}>Periksa status</button>
+            </div>
+          </>
+        )}
+        {tg && !tg.configured && <p className="muted" style={{ marginTop: 10 }}>Isi TELEGRAM_BOT_TOKEN di Vercel, lalu redeploy.</p>}
+        {tg && tg.configured && !tg.valid && <p className="err" style={{ marginTop: 10 }}>{tg.error}</p>}
+        {tgMsg && <p className={tgMsg === 'Webhook terpasang.' ? 'ok' : 'err'} style={{ marginTop: 8 }}>{tgMsg}</p>}
       </section>
 
       <section className="panel" style={{ marginTop: 14 }}>
@@ -119,7 +185,7 @@ export default function AdminPanel() {
           <div className="tablewrap">
             <table>
               <thead>
-                <tr><th>Email</th><th>Status</th><th>WhatsApp</th><th>Daftar</th><th>Terakhir masuk</th><th>Aksi</th></tr>
+                <tr><th>Email</th><th>Status</th><th>Chat</th><th>Daftar</th><th>Terakhir masuk</th><th>Aksi</th></tr>
               </thead>
               <tbody>
                 {users.map((u) => {
@@ -128,13 +194,13 @@ export default function AdminPanel() {
                     <tr key={u.id}>
                       <td>{u.email}{u.isAdmin && <span className="tag admin-tag" style={{ marginLeft: 8 }}>Admin</span>}</td>
                       <td><span className={`tag ${cls}`}>{label}</span></td>
-                      <td>{u.phone || '—'}</td>
+                      <td>{[u.phone ? 'WA ' + u.phone : null, u.tg ? 'Telegram' : null].filter(Boolean).join(' · ') || '—'}</td>
                       <td>{fmt(u.createdAt)}</td>
                       <td>{fmt(u.lastSignIn)}</td>
                       <td>
                         {u.isAdmin ? <span className="muted">—</span> : (
                           <div className="row">
-                            {u.linked && <button className="btn ghost small" disabled={!!busy} onClick={() => act(u, 'unlink_wa')}>{ACTION_LABEL.unlink_wa}</button>}
+                            {u.linked && <button className="btn ghost small" disabled={!!busy} onClick={() => act(u, 'unlink_chat')}>{ACTION_LABEL.unlink_chat}</button>}
                             {u.hasSheet && <button className="btn ghost small" disabled={!!busy} onClick={() => act(u, 'reset_sheet')}>{ACTION_LABEL.reset_sheet}</button>}
                             <button className="btn ghost small danger" disabled={!!busy} onClick={() => act(u, 'delete')}>{ACTION_LABEL.delete}</button>
                           </div>

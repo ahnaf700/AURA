@@ -34,6 +34,14 @@ Browser ─► Supabase Auth (magic link) ─► /dashboard ─► /api/data ─
 6. `npm install` lalu `npm run dev` (lokal) atau deploy ke Vercel dan isi env di dashboard Vercel.
    Untuk uji webhook lokal pakai tunnel (ngrok / cloudflared).
 
+## Telegram (saluran chat)
+1. Di Telegram, buka @BotFather, kirim `/newbot`, ikuti langkahnya, simpan **token** dan **username** bot.
+2. Di Vercel isi `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET` (acak 24+ karakter), `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME`; redeploy.
+3. Login sebagai admin, buka `/admin`, bagian **Saluran chat**, klik **Pasang webhook Telegram**.
+4. Pengguna menautkan lewat dashboard: tombol **Buka Telegram** mengirim kode otomatis.
+
+WhatsApp tetap ada di kode. Aktifkan lagi dengan `NEXT_PUBLIC_WHATSAPP_ENABLED=true`; dua saluran bisa dipakai bersamaan.
+
 ## Admin
 Login dengan email yang ada di `ADMIN_EMAILS`, lalu buka `/admin`: ringkasan pengguna & pesan 24 jam, daftar pengguna
 (cari/filter, putuskan WhatsApp, lepas Sheet, hapus akun), kesehatan konfigurasi, dan log aksi admin.

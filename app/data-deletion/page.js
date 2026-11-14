@@ -36,7 +36,7 @@ export default function DataDeletionPage() {
       <h2>Data apa yang dihapus</h2>
       <ul>
         <li>Alamat email dan akun masukmu.</li>
-        <li>Nomor WhatsApp yang tertaut.</li>
+        <li>Nomor WhatsApp atau ID Telegram yang tertaut.</li>
         <li>Tautan (ID) Google Sheets yang tersimpan di akunmu.</li>
       </ul>
 
@@ -47,8 +47,8 @@ export default function DataDeletionPage() {
           menghentikan akses AURA, buka Sheet-mu, klik Bagikan, lalu hapus email bot AURA dari daftar editor.
         </li>
         <li>
-          Riwayat percakapan WhatsApp ada di perangkatmu dan di sistem Meta. Hapus lewat aplikasi WhatsApp
-          atau sesuai kebijakan Meta.
+          Riwayat percakapan ada di perangkatmu dan di sistem penyedia chat (Meta atau Telegram). Hapus lewat
+          aplikasinya atau sesuai kebijakan masing-masing.
         </li>
       </ul>
 

@@ -12,7 +12,7 @@ async function postJson(url, body) {
   return { ok: res.ok, data };
 }
 
-export default function Onboarding({ initial, botEmail, botWa, templateUrl }) {
+export default function Onboarding({ initial, botEmail, channels, templateUrl }) {
   const router = useRouter();
   const [hasSheet, setHasSheet] = useState(initial.hasSheet);
   const [linked, setLinked] = useState(initial.linked);
@@ -66,7 +66,9 @@ export default function Onboarding({ initial, botEmail, botWa, templateUrl }) {
     }
   }
 
-  const waLink = code && botWa ? `https://wa.me/${encodeURIComponent(botWa)}?text=${encodeURIComponent(code)}` : null;
+  const waLink = code && channels.whatsapp ? `https://wa.me/${encodeURIComponent(channels.whatsapp)}?text=${encodeURIComponent(code)}` : null;
+  const tgLink = code && channels.telegram ? `https://t.me/${encodeURIComponent(channels.telegram)}?start=${encodeURIComponent(code)}` : null;
+  const noChannel = !channels.telegram && !channels.whatsapp;
 
   return (
     <main>
@@ -119,22 +121,24 @@ export default function Onboarding({ initial, botEmail, botWa, templateUrl }) {
         </section>
 
         <section className={`step ${linked ? 'done' : hasSheet ? '' : 'locked'}`}>
-          <h2><span className="num">3</span> Hubungkan nomor WhatsApp</h2>
+          <h2><span className="num">3</span> Hubungkan chat</h2>
           {linked ? (
-            <p className="ok">Nomor WhatsApp terhubung. Selesai! Buka dashboard untuk melihat catatanmu.</p>
+            <p className="ok">Chat terhubung. Selesai! Buka dashboard untuk melihat catatanmu.</p>
           ) : (
             <>
               <p className="muted">
-                Buat kode, lalu kirim kode itu ke WhatsApp AURA dari nomor yang ingin kamu pakai. Kode berlaku 10 menit.
+                Buat kode, lalu kirim kode itu ke bot AURA dari chat yang ingin kamu pakai. Kode berlaku 10 menit.
               </p>
+              {noChannel && <p className="err">Belum ada saluran chat yang aktif. Hubungi admin.</p>}
               {!code ? (
                 <div className="row">
-                  <button className="btn" onClick={makeCode} disabled={!hasSheet || busy}>Buat kode</button>
+                  <button className="btn" onClick={makeCode} disabled={!hasSheet || busy || noChannel}>Buat kode</button>
                 </div>
               ) : (
                 <>
                   <div className="code" aria-live="polite">{code}</div>
                   <div className="row">
+                    {tgLink && <a className="btn" href={tgLink} target="_blank" rel="noopener noreferrer">Buka Telegram</a>}
                     {waLink && <a className="btn" href={waLink} target="_blank" rel="noopener noreferrer">Kirim lewat WhatsApp</a>}
                     <button className="btn ghost" onClick={makeCode} disabled={busy}>Buat kode baru</button>
                   </div>

@@ -144,7 +144,7 @@ export default function Dashboard() {
                   ))}
                 </ul>
               ) : (
-                <p className="empty">Kirim pengeluaran lewat WhatsApp, misalnya &quot;makan siang 25rb&quot;.</p>
+                <p className="empty">Kirim pengeluaran lewat chat, misalnya &quot;makan siang 25rb&quot;.</p>
               )}
             </section>
           </div>

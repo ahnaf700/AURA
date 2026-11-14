@@ -12,7 +12,8 @@ export default async function DashboardPage({ searchParams }) {
   const sp = await searchParams;
   const row = await getOrCreateUserRow(user);
 
-  const complete = !!row?.spreadsheet_id && !!row?.no_whatsapp;
+  const linkedAny = !!(row?.no_whatsapp || row?.telegram_chat_id);
+  const complete = !!row?.spreadsheet_id && linkedAny;
   const showSetup = !complete || sp?.setup === '1';
 
   return (
@@ -35,9 +36,13 @@ export default async function DashboardPage({ searchParams }) {
 
       {showSetup ? (
         <Onboarding
-          initial={{ hasSheet: !!row?.spreadsheet_id, linked: !!row?.no_whatsapp }}
+          initial={{ hasSheet: !!row?.spreadsheet_id, linked: linkedAny }}
           botEmail={process.env.NEXT_PUBLIC_BOT_EMAIL || ''}
-          botWa={process.env.NEXT_PUBLIC_BOT_WA_NUMBER || ''}
+          channels={{
+            telegram: process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || '',
+            // WhatsApp baru tampil bila NEXT_PUBLIC_WHATSAPP_ENABLED=true (setelah jalurnya siap).
+            whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_ENABLED === 'true' ? process.env.NEXT_PUBLIC_BOT_WA_NUMBER || '' : '',
+          }}
           templateUrl={process.env.NEXT_PUBLIC_TEMPLATE_URL || ''}
         />
       ) : (

@@ -19,7 +19,7 @@ export default async function Home({ searchParams }) {
         <LogoLockup size={112} priority />
         <h1>Catat uang semudah kirim chat.</h1>
         <p className="lead">
-          Ketik pengeluaranmu di WhatsApp. AURA merapikannya ke Google Sheets milikmu sendiri, lalu memberi saran
+          Ketik pengeluaranmu di chat. AURA merapikannya ke Google Sheets milikmu sendiri, lalu memberi saran
           keuangan yang sesuai kebiasaanmu.
         </p>
         <LoginForm failed={sp?.error === 'login'} />

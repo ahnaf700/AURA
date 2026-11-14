@@ -10,7 +10,9 @@ export async function GET() {
   const row = await getOrCreateUserRow(user);
   return NextResponse.json({
     hasSheet: !!row?.spreadsheet_id,
-    linked: !!row?.no_whatsapp,
+    linked: !!(row?.no_whatsapp || row?.telegram_chat_id),
+    whatsapp: !!row?.no_whatsapp,
+    telegram: !!row?.telegram_chat_id,
     phone: maskPhone(row?.no_whatsapp),
   });
 }

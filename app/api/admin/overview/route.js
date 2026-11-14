@@ -5,7 +5,7 @@ import { maskPhone } from '@/lib/users';
 
 export const dynamic = 'force-dynamic';
 
-const CONFIG_KEYS = ['GEMINI_API_KEY', 'SUPABASE_SERVICE_KEY', 'GAS_WEB_APP_URL', 'GAS_SHARED_SECRET', 'META_ACCESS_TOKEN', 'META_PHONE_NUMBER_ID', 'META_APP_SECRET', 'META_VERIFY_TOKEN', 'NEXT_PUBLIC_SITE_URL'];
+const CONFIG_KEYS = ['GEMINI_API_KEY', 'SUPABASE_SERVICE_KEY', 'GAS_WEB_APP_URL', 'GAS_SHARED_SECRET', 'META_ACCESS_TOKEN', 'META_PHONE_NUMBER_ID', 'META_APP_SECRET', 'META_VERIFY_TOKEN', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_WEBHOOK_SECRET', 'NEXT_PUBLIC_TELEGRAM_BOT_USERNAME', 'NEXT_PUBLIC_SITE_URL'];
 
 export async function GET() {
   const me = await currentAdmin();
@@ -14,7 +14,7 @@ export async function GET() {
   const db = admin();
   const day = new Date(Date.now() - 864e5).toISOString();
   const [users, msgs, hits, logs, authList] = await Promise.all([
-    db.from('users').select('id, auth_user_id, email, no_whatsapp, spreadsheet_id, created_at').order('created_at', { ascending: false }).limit(500),
+    db.from('users').select('id, auth_user_id, email, no_whatsapp, telegram_chat_id, spreadsheet_id, created_at').order('created_at', { ascending: false }).limit(500),
     db.from('processed_messages').select('wa_number').gte('created_at', day).limit(5000),
     db.from('api_hits').select('id', { count: 'exact', head: true }).gte('created_at', day),
     db.from('admin_log').select('admin_email, action, target_email, created_at').order('created_at', { ascending: false }).limit(15),
@@ -31,7 +31,9 @@ export async function GET() {
     email: u.email,
     phone: maskPhone(u.no_whatsapp),
     hasSheet: !!u.spreadsheet_id,
-    linked: !!u.no_whatsapp,
+    wa: !!u.no_whatsapp,
+    tg: !!u.telegram_chat_id,
+    linked: !!(u.no_whatsapp || u.telegram_chat_id),
     isAdmin: isAdminEmail(u.email),
     createdAt: u.created_at,
     lastSignIn: lastSeen.get(u.auth_user_id) || null,

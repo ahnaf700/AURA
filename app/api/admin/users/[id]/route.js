@@ -6,7 +6,7 @@ import { sameOrigin } from '@/lib/security';
 export const dynamic = 'force-dynamic';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const ACTIONS = new Set(['unlink_wa', 'reset_sheet', 'delete']);
+const ACTIONS = new Set(['unlink_chat', 'reset_sheet', 'delete']);
 
 export async function POST(req, { params }) {
   if (!sameOrigin(req)) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
@@ -33,8 +33,8 @@ export async function POST(req, { params }) {
   }
 
   let error;
-  if (action === 'unlink_wa') {
-    ({ error } = await db.from('users').update({ no_whatsapp: null, link_code: null, link_code_expires: null }).eq('id', id));
+  if (action === 'unlink_chat') {
+    ({ error } = await db.from('users').update({ no_whatsapp: null, telegram_chat_id: null, link_code: null, link_code_expires: null }).eq('id', id));
   } else if (action === 'reset_sheet') {
     ({ error } = await db.from('users').update({ spreadsheet_id: null }).eq('id', id));
   } else {

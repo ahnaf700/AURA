@@ -30,8 +30,8 @@ export default function PrivacyPage() {
       <h2>2. Data yang kami proses</h2>
       <ul>
         <li><strong>Alamat email</strong>, untuk masuk ke akun lewat link atau kode yang dikirim ke email.</li>
-        <li><strong>Nomor WhatsApp</strong>, untuk menautkan akun dan mengenali pengirim pesan.</li>
-        <li><strong>Isi pesan WhatsApp</strong> yang kamu kirim ke AURA, untuk dibaca dan dicatat sebagai transaksi.</li>
+        <li><strong>Nomor WhatsApp atau ID chat Telegram</strong>, untuk menautkan akun dan mengenali pengirim pesan.</li>
+        <li><strong>Isi pesan</strong> yang kamu kirim ke AURA lewat WhatsApp atau Telegram, untuk dibaca dan dicatat sebagai transaksi.</li>
         <li><strong>ID Google Sheets</strong> milikmu, supaya AURA tahu ke mana transaksi dicatat.</li>
         <li><strong>Catatan teknis</strong> seperti waktu akses dan kesalahan sistem, untuk menjaga layanan tetap berjalan dan aman.</li>
       </ul>
@@ -52,6 +52,7 @@ export default function PrivacyPage() {
       <p>Untuk menjalankan layanan, data diproses oleh penyedia berikut sesuai kebijakan mereka masing-masing:</p>
       <ul>
         <li><strong>Meta (WhatsApp Business Platform)</strong>, untuk menerima dan mengirim pesan WhatsApp.</li>
+        <li><strong>Telegram</strong>, untuk menerima dan mengirim pesan lewat bot Telegram.</li>
         <li><strong>Google</strong> (Google Sheets dan model AI Gemini), untuk menyimpan catatan dan memahami isi pesan.</li>
         <li><strong>Supabase</strong>, untuk database akun dan proses masuk.</li>
         <li><strong>Vercel</strong>, untuk menjalankan situs dan server AURA.</li>
@@ -59,7 +60,7 @@ export default function PrivacyPage() {
 
       <h2>5. Berapa lama data disimpan</h2>
       <ul>
-        <li>Data akun (email, nomor WhatsApp, tautan Sheets) disimpan selama akunmu aktif.</li>
+        <li>Data akun (email, nomor WhatsApp atau ID Telegram, tautan Sheets) disimpan selama akunmu aktif.</li>
         <li>Penanda pesan yang sudah diproses (untuk mencegah pencatatan ganda) dihapus otomatis setelah sekitar 24 jam.</li>
         <li>Data akun dihapus bila kamu memintanya (lihat bagian 6).</li>
       </ul>
